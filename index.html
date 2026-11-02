@@ -237,7 +237,7 @@ table.bank td[contenteditable]{min-width:140px;background:#fffef5;font-size:13.5
 
 <script>
 'use strict';
-const APP_VERSION = '1.1';
+const APP_VERSION = '1.2';
 
 /* ======================= أدوات عامة ======================= */
 const $ = (s, r = document) => r.querySelector(s);
@@ -444,7 +444,9 @@ const scBadge = k => { const x = S.scores[k], v = scoreOf(k);
 
 /* ======================= PDF: قراءة وعرض ودمج ======================= */
 pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([document.getElementById('pdfw').textContent], { type: 'text/javascript' }));
-const loadPdf = bytes => pdfjsLib.getDocument({ data: bytes.slice(), isEvalSupported: false }).promise;
+/* disableFontFace: يرسم PDF.js أشكال الحروف من الملف مباشرة بدل تمريرها لمحرك النصوص في المتصفح،
+   فلا تُعاد تشكيل الحروف العربية (كان ذلك يقطّعها ويداخلها في ملفات تطبيق الاختبارات) */
+const loadPdf = bytes => pdfjsLib.getDocument({ data: bytes.slice(), isEvalSupported: false, disableFontFace: true }).promise;
 async function blobOf(k) { const b = await DB.get('blobs', k); if (!b) throw new Error('الملف غير موجود في التخزين، أعد استيراده'); return new Uint8Array(b); }
 
 async function extractScore(bytes) {
